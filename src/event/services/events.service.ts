@@ -23,19 +23,12 @@ export class EventsService {
     private readonly dataSource: DataSource,
   ) {}
 
-  async create(files: Express.Multer.File[], createEventDto: CreateEventDto) {
+  async create(createEventDto: CreateEventDto) {
     try {
-      const result = await this.dataSource.transaction(async (manager) => {
-        const event = this.repository.create(createEventDto);
-        const createdEvent = await manager.save(event);
-        const images = await this.fileService.create(files, createdEvent.id);
+      const event = this.repository.create(createEventDto);
+      await this.repository.save(event);
 
-        return {
-          event: createdEvent,
-          images,
-        };
-      });
-      return result;
+      return event;
     } catch (error) {
       console.log(error.message);
       throw new BadRequestException('Error creating the event');
@@ -50,23 +43,18 @@ export class EventsService {
   async findOne(id: string) {
     const event = await this.repository.findOne({
       where: { id },
+      relations: {
+        category: true,
+        status: true,
+        address: true,
+        ticketTypes: true,
+        sponsors: true,
+      }
     });
 
     if (!event) throw new NotFoundException('Event not found');
     return event;
   }
-
-  // async create(payload: CreateEventDto) {
-  //   try {
-  //     const event = this.repository.create(payload);
-  //     await this.repository.save(event);
-  //     return event;
-  //   } catch (error) {
-  //     console.log(error);
-
-  //     return 'Error creating the event';
-  //   }
-  // }
 
   async update(id: string, payload: UpdateEventDto) {
     const event = await this.repository.preload({ id, ...payload });

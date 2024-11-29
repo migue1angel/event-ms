@@ -1,7 +1,16 @@
-import { IsBoolean, IsDate, IsNotEmpty, IsOptional, IsString} from 'class-validator';
+import {
+  IsBoolean,
+  IsDate,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  IsUUID,
+} from 'class-validator';
 import { CreateSponsorDto } from '../sponsor/create-sponsor.dto';
 import { CatalogueEntity } from '../../entities/catalogue.entity';
 import { CreateAddressDto } from '../address/create-address.dto';
+import { CreateTicketTypeDto } from '../ticket_type/create-ticket-type.dto';
+import { Type } from 'class-transformer';
 
 export class CreateEventDto {
   @IsNotEmpty()
@@ -13,20 +22,21 @@ export class CreateEventDto {
   description: string;
 
   @IsNotEmpty()
-  @IsDate()
-  start_date: Date;
+  // @IsDate()
+  startDate: Date;
 
   @IsNotEmpty()
-  @IsDate()
-  end_date: Date;
+  // @IsDate()
+  endDate: Date;
 
   @IsNotEmpty()
+  @IsUUID()
   status: CatalogueEntity;
-
+  
   @IsNotEmpty()
   @IsBoolean()
   isPublic: boolean;
-
+  
   @IsNotEmpty()
   category: CatalogueEntity;
 
@@ -34,9 +44,16 @@ export class CreateEventDto {
   organizer: string;
 
   @IsNotEmpty()
+  @Type(() => CreateAddressDto)
   address: CreateAddressDto;
-  
+
+  @IsBoolean()
+  hasSponsors: boolean;
+
   @IsOptional()
   sponsors?: CreateSponsorDto[];
-  
+
+  @IsNotEmpty()
+  @Type(() => CreateTicketTypeDto)
+  ticket_types?: CreateTicketTypeDto[];
 }

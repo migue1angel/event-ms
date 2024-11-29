@@ -60,15 +60,21 @@ export class EventEntity {
     name: 'start_date',
     nullable: false,
   })
-  start_date: Date;
+  startDate: Date;
 
   @Column({
     type: 'timestamp',
     name: 'end_date',
     nullable: false,
   })
-  end_date: Date;
+  endDate: Date;
 
+
+  // @ManyToOne(() => CatalogueEntity)
+  // @JoinColumn({name: 'workday_id'})
+  // workday: CatalogueEntity;
+  // @Column({type: 'uuid', name: 'workday_id', comment: 'Jornada laboral'})
+  // workdayId: string;
   @ManyToOne(() => CatalogueEntity)
   @JoinColumn({
     name: 'status_id',
@@ -83,8 +89,6 @@ export class EventEntity {
   })
   isPublic: boolean;
 
-  fileId: string;
-
   @ManyToOne(() => CatalogueEntity)
   @JoinColumn({
     name: 'category_id',
@@ -93,7 +97,7 @@ export class EventEntity {
   category: CatalogueEntity;
 
   @Column({
-    name: 'organizer_id',
+    name: 'organizer_id', //userId
     type: 'uuid',
   })
   organizer: string;
@@ -119,6 +123,6 @@ export class EventEntity {
   registrations: RegistrationEntity[];
 
   @OneToMany(() => TicketTypeEntity, (ticket_type) => ticket_type.event)
-  ticket_types: TicketTypeEntity[];
+  ticketTypes: TicketTypeEntity[];
 
 }

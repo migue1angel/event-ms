@@ -11,7 +11,7 @@ export class CreateCatalogueDto {
 
     @IsString()
     @IsOptional()
-    description: string;
+    description?: string;
 
     @IsNotEmpty()
     @IsNumber()

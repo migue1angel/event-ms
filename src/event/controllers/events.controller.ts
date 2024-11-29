@@ -1,21 +1,7 @@
-import {
-  BadRequestException,
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Patch,
-  Post,
-  UploadedFiles,
-  UseInterceptors,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch } from '@nestjs/common';
 import { EventsService } from '../services/events.service';
-import { FilesInterceptor } from '@nestjs/platform-express';
 import { CreateEventDto, UpdateEventDto } from '../dto';
-import { MessagePattern } from '@nestjs/microservices';
-import { CloudinaryImageConfig } from 'src/configuration/cloudinary-image-config';
-import { FilesValidationPipe } from '../pipes/file.pipe';
+import { MessagePattern, Payload } from '@nestjs/microservices';
 
 @Controller('events')
 export class EventsController {
@@ -26,36 +12,16 @@ export class EventsController {
     const events = await this.eventsService.findAll();
     return events;
   }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
+  
+  @MessagePattern('findOneEvent')
+  findOne(@Payload() id: string) {
     const event = this.eventsService.findOne(id);
     return event;
   }
 
-  @Post('')
-  @UseInterceptors(
-    FilesInterceptor('images', 3, {
-      limits: {
-        fileSize: CloudinaryImageConfig.maxFileSize,
-      },
-      fileFilter: (req, file, callback) => {
-        if (!CloudinaryImageConfig.allowedMimeTypes.includes(file.mimetype)) {
-          return callback(
-            new BadRequestException('File type not allowed'),
-            false,
-          );
-        }
-        callback(null, true);
-      },
-    }),
-  )
-  async create(
-    @UploadedFiles(FilesValidationPipe)
-    files: Express.Multer.File[],
-    @Body() createEventDto: CreateEventDto,
-  ) {
-    const event = await this.eventsService.create(files, createEventDto);
+  @MessagePattern('createEvent')
+  async create(@Payload() createEventDto: CreateEventDto) {
+    const event = await this.eventsService.create(createEventDto);
     return event;
   }
 

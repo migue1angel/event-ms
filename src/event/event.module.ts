@@ -1,8 +1,6 @@
-import { Module } from '@nestjs/common';
+import { Global, Module } from '@nestjs/common';
 import { coreProviders } from './providers';
 import { DatabaseModule } from 'src/database/database.module';
-import { EventsService } from './services/events.service';
-import { CataloguesService } from './services/catalogues.service';
 import {
   AddressesController,
   CataloguesController,
@@ -21,6 +19,8 @@ import {
   TicketsService,
   TicketTypesService,
   FilesService,
+  CataloguesService,
+  EventsService,
 } from './services';
 
 @Module({
@@ -45,7 +45,11 @@ import {
     SponsorsService,
     TicketTypesService,
     TicketsService,
-    FilesService
+    FilesService,
+  ],
+  exports: [
+    ...coreProviders,
+    CataloguesService
   ],
 })
 export class EventModule {}
