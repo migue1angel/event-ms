@@ -10,11 +10,9 @@ export class DatabaseSeeder {
     const categories = await this.cataloguesService.insertMany(
       seedData.eventCategories,
     );
-    const status = await this.cataloguesService.insertMany(
-      seedData.eventStatus,
+    const states = await this.cataloguesService.insertMany(
+      seedData.eventStates,
     );
-    console.table(categories);
-    console.table(status);
-    return { categories, status };
+    return { categories, states };
   }
 }

@@ -22,7 +22,7 @@ export const seedData = {
     },
   ],
 
-  eventStatus: [
+  eventStates: [
     {
       name: 'Pendiente',
       code: 1,

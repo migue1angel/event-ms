@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  HttpStatus,
   Inject,
   Injectable,
   NotFoundException,
@@ -12,6 +13,8 @@ import {
   CoreRepositoryEnum,
   DatabaseProviderEnum,
 } from '../enums/repository.enum';
+import { NATS_SERVICE } from 'src/configuration/services';
+import { ClientProxy, RpcException } from '@nestjs/microservices';
 
 @Injectable()
 export class EventsService {
@@ -21,9 +24,18 @@ export class EventsService {
     private readonly fileService: FilesService,
     @Inject(DatabaseProviderEnum.POSTGRES)
     private readonly dataSource: DataSource,
+    @Inject(NATS_SERVICE)
+    private readonly client: ClientProxy,
   ) {}
 
   async create(createEventDto: CreateEventDto) {
+    // const user = await this.client.send('finduser', id);
+    // if (!user) {
+    //   throw new RpcException({
+    //     messsage: 'User not found',
+    //     status: HttpStatus.BAD_REQUEST,
+    //   });
+    // }
     try {
       const event = this.repository.create(createEventDto);
       await this.repository.save(event);
@@ -45,11 +57,11 @@ export class EventsService {
       where: { id },
       relations: {
         category: true,
-        status: true,
+        state: true,
         address: true,
         ticketTypes: true,
         sponsors: true,
-      }
+      },
     });
 
     if (!event) throw new NotFoundException('Event not found');

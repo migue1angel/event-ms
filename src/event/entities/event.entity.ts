@@ -21,6 +21,7 @@ export class EventEntity {
   id: string;
 
   @CreateDateColumn({
+    select:false,
     name: 'created_at',
     type: 'timestamp',
     default: () => 'CURRENT_TIMESTAMP',
@@ -69,18 +70,12 @@ export class EventEntity {
   })
   endDate: Date;
 
-
-  // @ManyToOne(() => CatalogueEntity)
-  // @JoinColumn({name: 'workday_id'})
-  // workday: CatalogueEntity;
-  // @Column({type: 'uuid', name: 'workday_id', comment: 'Jornada laboral'})
-  // workdayId: string;
   @ManyToOne(() => CatalogueEntity)
   @JoinColumn({
     name: 'status_id',
     foreignKeyConstraintName: 'event_status_id',
   })
-  status: CatalogueEntity;
+  state: CatalogueEntity;
 
   @Column({
     type: 'boolean',

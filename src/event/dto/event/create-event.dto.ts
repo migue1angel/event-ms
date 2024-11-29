@@ -31,7 +31,7 @@ export class CreateEventDto {
 
   @IsNotEmpty()
   @IsUUID()
-  status: CatalogueEntity;
+  state: CatalogueEntity;
   
   @IsNotEmpty()
   @IsBoolean()

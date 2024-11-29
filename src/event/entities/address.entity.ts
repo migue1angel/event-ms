@@ -13,6 +13,7 @@ export class AddressEntity {
   id: string;
 
   @CreateDateColumn({
+    select: false,
     name: 'created_at',
     type: 'timestamp',
     default: () => 'CURRENT_timestamp',
