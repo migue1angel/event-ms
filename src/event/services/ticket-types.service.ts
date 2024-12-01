@@ -14,7 +14,7 @@ export class TicketTypesService {
     
       async create(payload: CreateTicketTypeDto) {
         const ticketType = this.repository.create(payload);
-        await this.repository.save(ticketType);
+        // await this.repository.save(ticketType);
         return ticketType;
       }
     

@@ -18,8 +18,8 @@ export class SponsorsService {
   ) {}
 
   async create(payload: CreateSponsorDto) {
-    const sponsor = await this.repository.create(payload);
-    await this.repository.save(sponsor);
+    const sponsor = this.repository.create(payload);
+    // await this.repository.save(sponsor);
     return sponsor;
   }
 

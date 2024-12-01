@@ -13,7 +13,7 @@ export class AddressesService {
 
   async create(payload: CreateAddressDto) {
     const address = this.repository.create(payload);
-    await this.repository.save(address);
+    // await this.repository.save(address);
     return address;
   }
   async findAll() {

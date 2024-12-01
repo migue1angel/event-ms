@@ -22,9 +22,10 @@ import {
   CataloguesService,
   EventsService,
 } from './services';
+import { NatsModule } from 'src/transports/nats.module';
 
 @Module({
-  imports: [DatabaseModule],
+  imports: [DatabaseModule, NatsModule],
   controllers: [
     AddressesController,
     CataloguesController,
@@ -47,9 +48,6 @@ import {
     TicketsService,
     FilesService,
   ],
-  exports: [
-    ...coreProviders,
-    CataloguesService
-  ],
+  exports: [...coreProviders, CataloguesService],
 })
 export class EventModule {}
