@@ -26,22 +26,16 @@ import { firstValueFrom } from 'rxjs';
 @Injectable()
 export class EventsService {
   constructor(
-    @Inject(CoreRepositoryEnum.EVENT_REPOSITORY)
-    private readonly eventRepository: Repository<EventEntity>,
-    @Inject(CoreRepositoryEnum.ADDRESS_REPOSITORY)
-    private readonly addressRepository: Repository<AddressEntity>,
-    @Inject(CoreRepositoryEnum.TICKET_TYPE_REPOSITORY)
-    private readonly ticketTypeRepository: Repository<TicketTypeEntity>,
-    @Inject(CoreRepositoryEnum.SPONSOR_REPOSITORY)
-    private readonly sponsorRepository: Repository<SponsorEntity>,
-    private readonly addressService: AddressesService,
-    private readonly ticketTypeService: TicketTypesService,
-    private readonly sponsorsService: SponsorsService,
-    private readonly fileService: FilesService,
     @Inject(DatabaseProviderEnum.POSTGRES)
     private readonly dataSource: DataSource,
     @Inject(NATS_SERVICE)
     private readonly client: ClientProxy,
+    @Inject(CoreRepositoryEnum.EVENT_REPOSITORY)
+    private readonly eventRepository: Repository<EventEntity>,
+    private readonly addressService: AddressesService,
+    private readonly ticketTypeService: TicketTypesService,
+    private readonly sponsorsService: SponsorsService,
+    private readonly fileService: FilesService,
   ) {}
 
   async create(createEventDto: CreateEventDto) {
@@ -49,9 +43,9 @@ export class EventsService {
 
     try {
       const event = await this.dataSource.transaction(async (manager) => {
-        const address = manager
-          .withRepository(this.addressRepository)
-          .create(createEventDto.address);
+        const address = this.addressService.create({
+          ...createEventDto.address,
+        });
         await manager.save(address);
 
         const createdEvent = this.eventRepository.create({
@@ -60,8 +54,8 @@ export class EventsService {
         });
         await manager.save(createdEvent);
 
-        const ticketTypes = createEventDto.ticket_types.map((ticketType) => {
-          return manager.withRepository(this.ticketTypeRepository).create({
+        const ticketTypes = createEventDto.ticketTypes.map((ticketType) => {
+          return this.ticketTypeService.create({
             ...ticketType,
             event: createdEvent,
           });
@@ -69,7 +63,7 @@ export class EventsService {
         await manager.save(ticketTypes);
 
         const sponsors = createEventDto.sponsors.map((sponsor) => {
-          return manager.withRepository(this.sponsorRepository).create({
+          return this.sponsorsService.create({
             ...sponsor,
             event: createdEvent,
           });
@@ -81,8 +75,8 @@ export class EventsService {
 
       return event;
     } catch (error) {
-      console.error(error); 
-      throw new BadRequestException('Error creating the event', error.message);
+      console.error(error.message);
+      throw new BadRequestException('Error creating the event');
     }
   }
 

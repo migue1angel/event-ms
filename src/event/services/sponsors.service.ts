@@ -17,7 +17,7 @@ export class SponsorsService {
     private repository: Repository<SponsorEntity>,
   ) {}
 
-  async create(payload: CreateSponsorDto) {
+  create(payload: CreateSponsorDto) {
     const sponsor = this.repository.create(payload);
     // await this.repository.save(sponsor);
     return sponsor;

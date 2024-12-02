@@ -97,7 +97,7 @@ export class EventEntity {
   })
   organizer: string;
 
-  @ManyToOne(() => AddressEntity)
+  @ManyToOne(() => AddressEntity, {nullable:false})
   @JoinColumn({
     name: 'address_id',
     foreignKeyConstraintName: 'event_address_id_foreign_key',

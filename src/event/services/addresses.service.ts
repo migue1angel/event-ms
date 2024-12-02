@@ -11,7 +11,7 @@ export class AddressesService {
     private readonly repository: Repository<AddressEntity>,
   ) {}
 
-  async create(payload: CreateAddressDto) {
+  create(payload: CreateAddressDto) {
     const address = this.repository.create(payload);
     // await this.repository.save(address);
     return address;

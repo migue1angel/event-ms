@@ -12,7 +12,7 @@ export class TicketTypesService {
         private readonly repository: Repository<TicketTypeEntity>,
       ) {}
     
-      async create(payload: CreateTicketTypeDto) {
+      create(payload: CreateTicketTypeDto) {
         const ticketType = this.repository.create(payload);
         // await this.repository.save(ticketType);
         return ticketType;

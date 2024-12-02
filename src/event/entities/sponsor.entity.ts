@@ -46,7 +46,7 @@ export class SponsorEntity {
   fileId: string;
 
 
-  @ManyToOne(() => EventEntity)
+  @ManyToOne(() => EventEntity, {nullable: false})
   @JoinColumn({
     name: 'event_id',
     foreignKeyConstraintName: 'sponsor_event_id',

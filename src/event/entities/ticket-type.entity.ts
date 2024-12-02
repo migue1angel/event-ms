@@ -61,7 +61,7 @@ export class TicketTypeEntity{
   })
   isAvailable: boolean;
   
-  @ManyToOne(() => EventEntity)
+  @ManyToOne(() => EventEntity, {nullable: false})
   @JoinColumn({name: 'event_id'})
   event:EventEntity;
 }
