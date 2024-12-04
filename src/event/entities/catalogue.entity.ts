@@ -6,7 +6,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-@Entity('catalogues', { schema: 'core' })
+@Entity('catalogues')
 export class CatalogueEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;

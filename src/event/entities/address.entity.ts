@@ -7,7 +7,7 @@ import {
   Column,
   } from 'typeorm';
 
-@Entity('addresses', { schema: 'core' })
+@Entity('addresses')
 export class AddressEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;

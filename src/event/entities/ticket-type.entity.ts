@@ -10,7 +10,7 @@ import {
 
 import { EventEntity } from './event.entity';
 
-@Entity('ticket_type', { schema: 'core' })
+@Entity('ticket_type')
 export class TicketTypeEntity{
   @PrimaryGeneratedColumn('uuid')
   id: string;

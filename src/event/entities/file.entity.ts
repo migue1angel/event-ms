@@ -5,7 +5,7 @@ import {
   CreateDateColumn,
 } from 'typeorm';
 
-@Entity('files', { schema: 'core' })
+@Entity('files')
 export class FileEntity {
   @PrimaryGeneratedColumn('uuid', {
     comment: 'Unique identifier for the file record',

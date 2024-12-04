@@ -15,7 +15,7 @@ import { RegistrationEntity } from './registration.entity';
 import { AddressEntity } from './address.entity';
 import { TicketTypeEntity } from './ticket-type.entity';
 
-@Entity('events', { schema: 'core' })
+@Entity('events')
 export class EventEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
