@@ -7,7 +7,6 @@ export const databaseProviders = [
     provide: DatabaseProviderEnum.POSTGRES,
     useFactory: async () => {
       const { host, database, password, port, username } = envs.database;
-
       const dataSource = new DataSource({
         type: 'postgres',
         host,

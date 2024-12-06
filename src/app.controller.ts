@@ -1,5 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
-import { AppService } from './app.service';
+import { Controller } from '@nestjs/common';
 import { DatabaseSeeder } from './database/seeders/database.seeder';
 import { MessagePattern } from '@nestjs/microservices';
 
@@ -9,7 +8,6 @@ export class AppController {
 
   @MessagePattern('eventSeed')
   seed() {
-    // const seed = this.databaseSeeder.run;
     return this.databaseSeeder.run();
   }
 }

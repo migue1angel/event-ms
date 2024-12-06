@@ -30,6 +30,7 @@ export class CatalogueEntity {
   @Column({
     name: 'name',
     type: 'varchar',
+    unique:true,
     nullable: false,
   })
   name: string;
