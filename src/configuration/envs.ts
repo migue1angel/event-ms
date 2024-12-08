@@ -23,7 +23,7 @@ export const envsSchema = joi
     PORT: joi.number().required(),
     DB_HOST: joi.string().required(),
     DB_PORT: joi.string().required(),
-    DB_NAME_EVENTS: joi.string().required(),
+    DB_NAME: joi.string().required(),
     DB_PASSWORD: joi.string().required(),
     DB_USER: joi.string().required(),
     CLOUD_NAME: joi.string().required(),
@@ -47,7 +47,7 @@ export const envs: EnvsSchema = {
   database: {
     host: value.DB_HOST,
     port: value.DB_PORT,
-    database: value.DB_NAME_EVENTS,
+    database: value.DB_NAME,
     username: value.DB_USER,
     password: value.DB_PASSWORD,
   },

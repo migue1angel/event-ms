@@ -2,6 +2,8 @@ import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/commo
 import { CreateTicketTypeDto } from '../dto/ticket_type/create-ticket-type.dto';
 import { UpdateTicketTypeDto } from '../dto/ticket_type/update-ticket-type.dto';
 import { RegistrationsService, TicketTypesService } from '../services';
+import { ValidateTicketTypeDto } from '../dto/ticket_type/validate-ticket-type.dto';
+import { MessagePattern } from '@nestjs/microservices';
 
 @Controller('ticket-types')
 export class TicketTypesController {
@@ -10,6 +12,11 @@ export class TicketTypesController {
     @Post()
     create(@Body() createTicketTypeDto:CreateTicketTypeDto){
         return 'This action adds ticket type created';
+    }
+
+    @MessagePattern('validateTicketType')
+    async validate(@Body() validateTicketTypeDto:ValidateTicketTypeDto){
+        return await this.ticketTypesService.validateTicketTypes(validateTicketTypeDto);
     }
 
     @Get()
