@@ -1,4 +1,4 @@
 export class ValidateTicketTypeDto {
-    id: string;
+    ticketTypeId: string;
     disponibility: number;
 }

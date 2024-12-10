@@ -20,23 +20,26 @@ export class TicketTypesService {
     return ticketType;
   }
 
-  async validateTicketTypes(validateTicketTypeDto: ValidateTicketTypeDto) {
-    const ticketType = await this.repository.findOne({
+  async validateTicketTypes(validateTicketTypeDto: ValidateTicketTypeDto[]) {
+    const ticketTypes = await this.repository.find({
       where: {
-        id: validateTicketTypeDto.id,
+        id: In(validateTicketTypeDto.map((ticketType) => ticketType.ticketTypeId)),
       },
       relations: {
-        event: true,
-      }
-    });
+        event: true,  
+      },
+    });  
 
-    if (!ticketType) {
+    if (!ticketTypes) {
       throw new RpcException('Ticket types not found');
     }
-    if (ticketType.disponibility < validateTicketTypeDto.disponibility) {
-      throw new RpcException('There are not enough tickets available');
-    }
-    return ticketType;
+    ticketTypes.forEach((ticketType) => {
+      const currentTicketType = validateTicketTypeDto.find((t) => t.ticketTypeId === ticketType.id);
+      if (ticketType.disponibility < currentTicketType.disponibility) {
+        throw new RpcException(`There are not enough ${ticketType.name} tickets available`);
+      }
+    });
+    return ticketTypes;
   }
 
   async findAll() {
