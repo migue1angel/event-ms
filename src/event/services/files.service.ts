@@ -22,28 +22,23 @@ export class FilesService {
   }
 
   async create(
-    files: Express.Multer.File[],
+    images: CloudinaryResponse[],
     entityId: string,
   ): Promise<FileEntity[]> {
-    const cloudinaryImages = await Promise.all(
-      files.map(async (image) => {
-        return await this.cloudinaryService.uploadImage(image);
-      }),
-    );
-
+    
     try {
-      const images = await Promise.all(
-        cloudinaryImages.map(async (image: CloudinaryResponse) => {
+      const newImages = await Promise.all(
+        images.map(async (image: CloudinaryResponse) => {
           const newImage = this.repository.create({ ...image, entityId });
           await this.repository.save(newImage);
 
           return newImage;
         }),
       );
-      return images;
+      return newImages;
     } catch (error) {
       console.error(error);
-      this.handleSaveError(cloudinaryImages);
+      this.handleSaveError(images);
     }
   }
 

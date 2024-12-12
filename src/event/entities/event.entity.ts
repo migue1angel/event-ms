@@ -70,12 +70,12 @@ export class EventEntity {
   })
   endDate: Date;
 
-  @ManyToOne(() => CatalogueEntity)
-  @JoinColumn({
-    name: 'status_id',
-    foreignKeyConstraintName: 'event_status_id',
+  @Column({
+    name: 'status',
+    type: 'varchar',
+    enum: ['PROGRESS', 'FINISHED', 'COMING'],
   })
-  state: CatalogueEntity;
+  state: string;
 
   @Column({
     type: 'boolean',
@@ -97,7 +97,7 @@ export class EventEntity {
   })
   organizer: string;
 
-  @ManyToOne(() => AddressEntity, {nullable:false})
+  @ManyToOne(() => AddressEntity, {nullable:false, cascade: true})
   @JoinColumn({
     name: 'address_id',
     foreignKeyConstraintName: 'event_address_id_foreign_key',
@@ -111,13 +111,13 @@ export class EventEntity {
   })
   hasSponsors: boolean;
 
-  @OneToMany(() => SponsorEntity, (sponsor) => sponsor.event)
+  @OneToMany(() => SponsorEntity, (sponsor) => sponsor.event, {cascade: true})
   sponsors: SponsorEntity[];
 
-  @OneToMany(() => RegistrationEntity, (registration) => registration.event)
+  @OneToMany(() => RegistrationEntity, (registration) => registration.event, {cascade: true})
   registrations: RegistrationEntity[];
 
-  @OneToMany(() => TicketTypeEntity, (ticket_type) => ticket_type.event)
+  @OneToMany(() => TicketTypeEntity, (ticket_type) => ticket_type.event, {cascade: true})
   ticketTypes: TicketTypeEntity[];
 
 }

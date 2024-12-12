@@ -22,6 +22,8 @@ import { AddressEntity } from '../entities/address.entity';
 import { TicketTypeEntity } from '../entities/ticket-type.entity';
 import { SponsorEntity } from '../entities/sponsor.entity';
 import { firstValueFrom } from 'rxjs';
+import { FileEntity } from '../entities/file.entity';
+import { stat } from 'fs';
 
 @Injectable()
 export class EventsService {
@@ -32,6 +34,8 @@ export class EventsService {
     private readonly client: ClientProxy,
     @Inject(CoreRepositoryEnum.EVENT_REPOSITORY)
     private readonly eventRepository: Repository<EventEntity>,
+    @Inject(CoreRepositoryEnum.FILE_REPOSITORY)
+    private readonly fileRepository: Repository<FileEntity>,
     private readonly addressService: AddressesService,
     private readonly ticketTypeService: TicketTypesService,
     private readonly sponsorsService: SponsorsService,
@@ -42,41 +46,22 @@ export class EventsService {
     // this.validateUser(createEventDto.organizer);
 
     try {
-      const event = await this.dataSource.transaction(async (manager) => {
-        const address = this.addressService.create({
-          ...createEventDto.address,
-        });
-        await manager.save(address);
+      const result = await this.dataSource.transaction(async (manager) => {
+        const event = this.eventRepository.create(createEventDto);
+        await manager.save(event);
+        
+        const images = await this.fileService.create( createEventDto.images, event.id);
+        await manager.save(images); 
 
-        const createdEvent = this.eventRepository.create({
-          ...createEventDto,
-          address: address,
-        });
-        await manager.save(createdEvent);
-
-        const ticketTypes = createEventDto.ticketTypes.map((ticketType) => {
-          return this.ticketTypeService.create({
-            ...ticketType,
-            event: createdEvent,
-          });
-        });
-        await manager.save(ticketTypes);
-
-        const sponsors = createEventDto.sponsors.map((sponsor) => {
-          return this.sponsorsService.create({
-            ...sponsor,
-            event: createdEvent,
-          });
-        });
-        await manager.save(sponsors);
-
-        return createdEvent;
+        return {
+          event,
+          images,
+        };
       });
-
-      return event;
+      return result;
     } catch (error) {
-      console.error(error.message);
-      throw new BadRequestException('Error creating the event');
+      console.log(error.message);
+      throw new RpcException({status: HttpStatus.BAD_REQUEST, message: 'Error creating the event'});
     }
   }
 
@@ -90,7 +75,6 @@ export class EventsService {
       where: { id },
       relations: {
         category: true,
-        state: true,
         address: true,
         ticketTypes: true,
         sponsors: true,

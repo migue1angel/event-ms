@@ -20,7 +20,7 @@ export class EventsController {
   }
 
   @MessagePattern('createEvent')
-  async create(@Payload() createEventDto: CreateEventDto) {
+  async create(@Payload() createEventDto: CreateEventDto) {     
     const event = await this.eventsService.create(createEventDto);
     return event;
   }

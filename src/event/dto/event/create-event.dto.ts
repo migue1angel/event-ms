@@ -31,7 +31,7 @@ export class CreateEventDto {
 
   @IsNotEmpty()
   @IsUUID()
-  state: CatalogueEntity;
+  state: string;
   
   @IsNotEmpty()
   @IsBoolean()
@@ -56,4 +56,7 @@ export class CreateEventDto {
   @IsNotEmpty()
   @Type(() => CreateTicketTypeDto)
   ticketTypes: CreateTicketTypeDto[];
+
+  images: CloudinaryResponse[];
 }
+  
