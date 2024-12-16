@@ -12,14 +12,16 @@ export class CatalogueEntity {
   id: string;
 
   @CreateDateColumn({
+    select: false,
     name: 'created_at',
     type: 'timestamp',
     nullable: true,
     default: ()=> 'CURRENT_TIMESTAMP'
   })
   createdAt: Date;
-
+  
   @DeleteDateColumn({
+    select: false,
     name: 'deleted_at',
     type: 'timestamp',
     nullable: true,

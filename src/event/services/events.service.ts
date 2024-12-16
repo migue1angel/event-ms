@@ -15,15 +15,7 @@ import {
 } from '../enums/repository.enum';
 import { NATS_SERVICE } from 'src/configuration/services';
 import { ClientProxy, RpcException } from '@nestjs/microservices';
-import { AddressesService } from './addresses.service';
-import { TicketTypesService } from './ticket-types.service';
-import { SponsorsService } from './sponsors.service';
-import { AddressEntity } from '../entities/address.entity';
-import { TicketTypeEntity } from '../entities/ticket-type.entity';
-import { SponsorEntity } from '../entities/sponsor.entity';
 import { firstValueFrom } from 'rxjs';
-import { FileEntity } from '../entities/file.entity';
-import { stat } from 'fs';
 
 @Injectable()
 export class EventsService {
@@ -34,11 +26,6 @@ export class EventsService {
     private readonly client: ClientProxy,
     @Inject(CoreRepositoryEnum.EVENT_REPOSITORY)
     private readonly eventRepository: Repository<EventEntity>,
-    @Inject(CoreRepositoryEnum.FILE_REPOSITORY)
-    private readonly fileRepository: Repository<FileEntity>,
-    private readonly addressService: AddressesService,
-    private readonly ticketTypeService: TicketTypesService,
-    private readonly sponsorsService: SponsorsService,
     private readonly fileService: FilesService,
   ) {}
 
@@ -49,9 +36,12 @@ export class EventsService {
       const result = await this.dataSource.transaction(async (manager) => {
         const event = this.eventRepository.create(createEventDto);
         await manager.save(event);
-        
-        const images = await this.fileService.create( createEventDto.images, event.id);
-        await manager.save(images); 
+
+        const images = await this.fileService.create(
+          createEventDto.images,
+          event.id,
+        );
+        await manager.save(images);
 
         return {
           event,
@@ -61,13 +51,32 @@ export class EventsService {
       return result;
     } catch (error) {
       console.log(error.message);
-      throw new RpcException({status: HttpStatus.BAD_REQUEST, message: 'Error creating the event'});
+      throw new RpcException({
+        status: HttpStatus.BAD_REQUEST,
+        message: 'Error creating the event',
+      });
     }
   }
 
   async findAll() {
-    const events = await this.eventRepository.find();
-    return events;
+    const events = await this.eventRepository.find({
+      relations: {
+        category: true,
+        //   address: true,
+        //   sponsors: true,
+        //   ticketTypes: true,
+      },
+    });
+    const returnedEvents = await Promise.all(
+      events.map(async (event) => {
+        const images = await this.fileService.findByEvent(event.id);
+        return {
+          ...event,
+          images,
+        };
+      }),
+    );
+    return returnedEvents;
   }
 
   async findOne(id: string) {
@@ -80,9 +89,10 @@ export class EventsService {
         sponsors: true,
       },
     });
-
+    const organizer = await firstValueFrom(this.client.send('findUser', event.organizer));
+    const images = await this.fileService.findByEvent(id);
     if (!event) throw new NotFoundException('Event not found');
-    return event;
+    return {...event, images, organizer};
   }
 
   async update(id: string, payload: UpdateEventDto) {

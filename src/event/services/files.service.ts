@@ -55,6 +55,13 @@ export class FilesService {
     return event;
   }
 
+  async findByEvent(id: string) {
+    const images = await this.repository.find({
+      where: {entityId: id },
+    });
+    return images;
+  }
+
   async update(id: string, payload: UpdateCatalogueDto) {
     const event = await this.repository.preload({ id: id, ...payload });
     if (!event) throw new NotFoundException('Catalogue not found');
