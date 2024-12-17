@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common';
 import { CreateCatalogueDto, UpdateCatalogueDto } from '../dto';
 import { CataloguesService } from '../services/catalogues.service';
+import { MessagePattern } from '@nestjs/microservices';
 
 @Controller('catalogues')
 export class CataloguesController {
@@ -19,7 +20,7 @@ export class CataloguesController {
     return catalogue;
   }
 
-  @Get()
+  @MessagePattern('findAllCatalogues')
   async findAll() {
     const catalogues = await this.cataloguesService.findAll();
     return catalogues;

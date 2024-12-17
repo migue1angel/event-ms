@@ -13,6 +13,12 @@ export class EventsController {
     return events;
   }
   
+  @MessagePattern('findEventsByOrganizer')
+  async findByOrganizer(@Payload() id: string) {
+    const events = await this.eventsService.findByOrganizer(id);
+    return events;
+  }
+  
   @MessagePattern('findOneEvent')
   findOne(@Payload() id: string) {
     const event = this.eventsService.findOne(id);

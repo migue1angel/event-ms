@@ -78,6 +78,27 @@ export class EventsService {
     );
     return returnedEvents;
   }
+  async findByOrganizer(organizerId: string) {
+    const events = await this.eventRepository.find({
+      where: {organizer:organizerId},
+      relations: {
+        category: true,
+        //   address: true,
+        //   sponsors: true,
+        //   ticketTypes: true,
+      },
+    });
+    const returnedEvents = await Promise.all(
+      events.map(async (event) => {
+        const images = await this.fileService.findByEvent(event.id);
+        return {
+          ...event,
+          images,
+        };
+      }),
+    );
+    return returnedEvents;
+  }
 
   async findOne(id: string) {
     const event = await this.eventRepository.findOne({
