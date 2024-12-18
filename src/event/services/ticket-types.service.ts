@@ -50,6 +50,7 @@ export class TicketTypesService {
   async findOne(id: string) {
     const ticketType = await this.repository.findOne({
       where: { id },
+      relations: { event: true },
     });
     return ticketType;
   }

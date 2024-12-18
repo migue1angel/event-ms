@@ -35,9 +35,9 @@ export class TicketTypesController {
     return 'This action returns ticket types Found';
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return `This action returns a ${id} ticket type`;
+  @MessagePattern('findOneTicketType')
+  async findOne(@Payload() id: string) {
+    return await this.ticketTypesService.findOne(id);
   }
 
   @Patch()
